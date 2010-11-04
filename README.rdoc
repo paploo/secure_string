@@ -21,7 +21,9 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
-
+[1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
+                      * Added a full suite of spec tests.
+                      * Init from integer works now.
 [0.9.0 - 2010-Nov-03] Initial release.
                       * Feature complete, but lacks spec tests and examples.
                       

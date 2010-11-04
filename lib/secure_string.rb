@@ -28,7 +28,7 @@ class SecureString < String
     when :data
       data = value.to_s
     when :int
-      self.send(__method__, :hex, value.to_i.to_s(16))
+      data = self.send(__method__, :hex, value.to_i.to_s(16))
     when :base64
       data = Base64.decode64(value.to_s)
     end
