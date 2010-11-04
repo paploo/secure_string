@@ -10,10 +10,16 @@ class SecureString < String
     
     module ClassMethods
       
+      # Returns a list of supported ciphers.  These can be passed directly into
+      # the cipher methods.
+      def supported_ciphers
+        return OpenSSL::Cipher.ciphers
+      end
+      
       # A convenience method for generating random cipher keys and initialization
       # vectors.
       def cipher_keygen(cipher_name)
-        cipher = OpenSSL::Cipher::Cipher.new(cipher_name)
+        cipher = OpenSSL::Cipher.new(cipher_name)
         cipher.encrypt
         return [cipher.random_key, cipher.random_iv].map {|s| self.new(s)}
       end
@@ -60,13 +66,18 @@ class SecureString < String
         return self.class.new(msg)
       end
       
-      # Given an AES key and initialization vector, AES encode the data.
-      def to_aes(key, iv, key_len=256)
+      # Given an AES key and initialization vector, AES-CBC encode the data.
+      #
+      # Note that one normally never wants to use the same key and iv
+      # combination on two different messages as this weakens the security.
+      def to_aes(key, iv)
+        key_len = (key.bytesize * 8)
         return self.class.new( to_cipher("aes-#{key_len.to_i}-cbc", key, iv) )
       end
       
-      # Given an AES key and init vector, AES decode the data.
-      def from_aes(key, iv, key_len=256)
+      # Given an AES key and init vector, AES-CBC decode the data.
+      def from_aes(key, iv)
+        key_len = (key.bytesize * 8)
         return self.class.new( from_cipher("aes-#{key_len.to_i}-cbc", key, iv) )
       end
       

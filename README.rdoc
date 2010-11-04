@@ -23,7 +23,9 @@ mailto:jeff@paploo.net
 = Version History
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
                       * Added a full suite of spec tests.
-                      * Init from integer works now.
+                      * [FIX] Init from integer works now.
+                      * [FEATURE] Can get a list of supported ciphers.
+                      * [FEATURE] Auto-determine AES key length in +to_aes+ and +from_aes+.
 [0.9.0 - 2010-Nov-03] Initial release.
                       * Feature complete, but lacks spec tests and examples.
                       
@@ -31,6 +33,10 @@ mailto:jeff@paploo.net
 
 * Add complete spec tests.
 * Add examples.
+* Pull out all methods into modules so that it can be an extension of all Strings.
+* Explore how encodings affect the data.  What about when finding length?  What
+  methods should be recommended to users for finding byte-length vs. char length.
+  
 
 = License
 
