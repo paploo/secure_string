@@ -9,6 +9,8 @@ functionality that can be used individually:
 * Secure string support: Easy methods for RSA encryption, AES encoding, and
   SHA/MD5 digest hashing, of the data in the strings.
   
+= Examples
+  
 = Contact
 
 If you have any questions, comments, concerns, patches, or bugs, you can contact
@@ -23,9 +25,11 @@ mailto:jeff@paploo.net
 = Version History
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
                       * Added a full suite of spec tests.
-                      * [FIX] Init from integer works now.
                       * [FEATURE] Can get a list of supported ciphers.
                       * [FEATURE] Auto-determine AES key length in +to_aes+ and +from_aes+.
+                      * [CHANGE] RSA now defaults to 2048-bit keys instead of just 1024.
+                      * [FIX] Init from integer works now.
+                      * [FIX] RSA signatures can take digest classes, not just instances.
 [0.9.0 - 2010-Nov-03] Initial release.
                       * Feature complete, but lacks spec tests and examples.
                       
@@ -36,6 +40,9 @@ mailto:jeff@paploo.net
 * Pull out all methods into modules so that it can be an extension of all Strings.
 * Explore how encodings affect the data.  What about when finding length?  What
   methods should be recommended to users for finding byte-length vs. char length.
+* RSA encoding/decoding should auto-detect if the given key is public or private,
+  and use the correct encoding routine?  What about key confusion?
+* RSA signature digests: accept Digest hashes, not just OpenSSL::Digest hashes.
   
 
 = License
