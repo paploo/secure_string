@@ -33,5 +33,5 @@ end
 
 desc "Build the gem file for this package"
 task :build_gem do
-  STDOUT.puts `gem build poro.gemspec`
+  STDOUT.puts `gem build secure_string.gemspec`
 end
