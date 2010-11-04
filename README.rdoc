@@ -1,0 +1,57 @@
+= Overview
+
+SecureString is a special string subclass that provides two pieces of
+functionality that can be used individually:
+
+* Byte string support:  Although a string can already contain bytes, this makes
+  it easier to view and work with strings holding binary data, including
+  conversion to/from raw hex or Base64 encoded values.
+* Secure string support: Easy methods for RSA encryption, AES encoding, and
+  SHA/MD5 digest hashing, of the data in the strings.
+  
+= Contact
+
+If you have any questions, comments, concerns, patches, or bugs, you can contact
+me via the github repository at:
+
+http://github.com/paploo/secure_string
+
+or directly via e-mail at:
+
+mailto:jeff@paploo.net
+
+= Version History
+
+[1.0.0 - 2010-Nov-xx] Initial release.
+
+= License
+
+The files contained in this repository are released under the commercially and
+GPL compatible "New BSD License", given below:
+
+== License Text
+
+    Copyright (c) 2010, Jeffrey C. Reinecke
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+          notice, this list of conditions and the following disclaimer in the
+          documentation and/or other materials provided with the distribution.
+        * Neither the name of the copyright holders nor the
+          names of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written permission.
+    
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL JEFFREY REINECKE BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
