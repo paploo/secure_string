@@ -1,21 +1,11 @@
-require 'base64'
-
-require_relative 'secure_string/binary_string_data_methods'
-require_relative 'secure_string/digest_methods'
-require_relative 'secure_string/base64_methods'
-require_relative 'secure_string/cipher_methods'
-require_relative 'secure_string/rsa_methods'
+require_relative 'securize_string'
 
 # SecureString is a String subclass whose emphasis is on byte data rather than
 # human readable strings. class gives a number of conveniences, such
 # as  easier viewing of the byte data as hex, digest methods, and encryption
 # and decryption methods.
 class SecureString < String
-  include BinaryStringDataMethods
-  include Base64Methods
-  include DigestMethods
-  include RSAMethods
-  include CipherMethods
+  include SecurizeString
   
   # Creates the string from one many kinds of values:
   # [:data] (default) The passed string value is directly used.

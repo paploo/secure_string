@@ -1,6 +1,6 @@
 require 'openssl'
   
-class SecureString < String
+module SecurizeString
   # Adds methods for OpenSSL::Digest support.
   # See DigestMethods::ClassMethods and DigestMethods::InstanceMethods for more details.
   module DigestMethods
@@ -10,7 +10,7 @@ class SecureString < String
     end
     
     # Adds instance methods for OpenSSL::Digest support via inclusion of
-    # SecureString::DigestMethods to a class.
+    # SecurizeString::DigestMethods to a class.
     module InstanceMethods
       
       # Returns the digest of the byte string as a SecureString, using the passed OpenSSL object.

@@ -1,6 +1,6 @@
 require 'base64'
 
-class SecureString < String
+module SecurizeString
   # Adds methods for Base64 conversion.
   # See Base64Methods::InstanceMethods for more details.
   module Base64Methods
@@ -10,7 +10,7 @@ class SecureString < String
     end
     
     # Adds instance methods for Base64 support via inclusion of
-    # SecureString::Base64Methods to a class.
+    # SecurizeString::Base64Methods to a class.
     module InstanceMethods
       
       # Encodes to Base64.  By default, the output is made URL safe, which means all

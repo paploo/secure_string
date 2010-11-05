@@ -1,4 +1,6 @@
-class SecureString < String
+require 'base64'
+
+module SecurizeString
   # Adds the base methods necessary to make String or a String subclass handle
   # binary data better.
   # See BinaryStringDataMethods::ClassMethods and BinaryStringDataMethods::InstanceMethods for more deatils.
@@ -10,7 +12,7 @@ class SecureString < String
     end
     
     # Adds basic binary data class methods to String or a String subclass, via
-    # an include of SecureString::BinaryStringDataMethods
+    # an include of SecurizeString::BinaryStringDataMethods
     module ClassMethods
       
       # Creates a data string from one many kinds of values:
@@ -37,7 +39,7 @@ class SecureString < String
     end
     
     # Adds basic binary data instance methods to String or a String subclass, via
-    # an include of SecureString::BinaryStringDataMethods.
+    # an include of SecurizeString::BinaryStringDataMethods.
     module InstanceMethods
       
       # Override the default inspect to return the hexidecimal

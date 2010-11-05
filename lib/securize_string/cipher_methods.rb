@@ -1,6 +1,6 @@
 require 'openssl'
 
-class SecureString < String
+module SecurizeString
   # Adds methods for OpenSSL::Cipher support including AES encryption.
   # See CipherMethods::ClassMethods and CipherMethods::InstanceMethods for more details.
   module CipherMethods
@@ -11,7 +11,7 @@ class SecureString < String
     end
     
     # Adds class methods for OpenSSL::Cipher support, including AES encryption,
-    # via inclusion of SecureString::CipherMethods into a class.
+    # via inclusion of SecurizeString::CipherMethods into a class.
     module ClassMethods
       
       # Returns a list of supported ciphers.  These can be passed directly into
@@ -37,7 +37,7 @@ class SecureString < String
     end
     
     # Adds instance methods for OpenSSL::Cipher support, including AES encryption,
-    # via inclusion of SecureString::CipherMethods into a class.
+    # via inclusion of SecurizeString::CipherMethods into a class.
     module InstanceMethods
       
       # Given an OpenSSL cipher name, a key, and initialization vector,
