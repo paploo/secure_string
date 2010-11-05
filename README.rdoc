@@ -221,14 +221,6 @@ Note that when you do this, equality tests can be broken like so:
   s == b                       --> false
   s.bytes.to_a == b.bytes.to_a --> true
   
-== ByteString
-
-For added convenience, a ByteString class has been added to this library.
-ByteString is a minimal subclass of SecureString that automatically calls
-+force_encoding+ on initialization, changing the encoding to ASCII-8BIT.
-
-Normally, one will not need this class, as Secure String will be good enough.
-  
 = Contact
 
 If you have any questions, comments, concerns, patches, or bugs, you can contact
@@ -243,6 +235,7 @@ mailto:jeff@paploo.net
 = Version History
 [1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x.
                       * Tested in 1.9.1 and 1.9.2.
+                      * Added some documentation and tests on String encodings.
 [1.1.0 - 2010-Nov-04] Extracted methods into a module that can be easily included
                       on any String class.
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
