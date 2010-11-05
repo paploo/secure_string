@@ -17,4 +17,21 @@ class SecureString < String
     self.replace( data_string )
   end
   
+  # Override the default to_i method to return the integer value of the data
+  # contained in the string, rather than the parsed value of the characters.
+  def to_i
+    return data_to_i
+  end
+  
+  # Add a method to convert the internal binary data into a hex string.
+  def to_hex
+    return data_to_hex
+  end
+  
+  # Override the default inspect to return the hexidecimal
+  # representation of the data contained in this string.
+  def inspect
+    return "<#{to_hex}>"
+  end
+  
 end

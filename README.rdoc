@@ -115,13 +115,14 @@ cryptographic hash sums for the data in the string.  Note that since SecureStrin
 handles binary data well, the string value returns is NOT the hex string; to get
 the hex digest, simply call to_hex:
 
+  ss = SecureString.new("Hello World!")
   ss.to_md5.to_hex
     --> "ed076287532e86365e841e92bfc50d8c"
   ss.to_sha1.to_hex
     --> "2ef7bde608ce5404e97d5f042f95f89f1c232871"
   ss.to_sha256.to_hex
      --> "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069"
-  ss.to_digest(OpenSSL::Digest::SHA512).to_hex
+  ss.to_digest('SHA-512').to_hex
     --> "861844d6704e8573fec34d967e20bcfef3d424cf48be04e6dc08f2bd58c729743371015ead891cc3cf1c9d34b49264b510751b1ff9e537937bc46b5d6ff4ecc8"
 
 == RSA Methods Overview
@@ -233,9 +234,14 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
-[1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x.
+[1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x; Bugfixes and minor changes.
                       * Tested in 1.9.1 and 1.9.2.
                       * Added some documentation and tests on String encodings.
+                      * Added more spec tests.
+                      * (FEATURE) Digest methods may be supplied via string now.
+                      * (CHANGE) BinaryStringDataMethods now is non-clobbering and independent.
+                      * (CHANGE) An empty string's integer value is now zero.
+                      * (FIX) Non-hex characters are ignored when accepting hex data input.
 [1.1.0 - 2010-Nov-04] Extracted methods into a module that can be easily included
                       on any String class.
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
@@ -250,13 +256,9 @@ mailto:jeff@paploo.net
                       
 = TODO List
 
-* Rename the base +inspect+ and +to_i+ methods and only put them on SecureString
-  so that if String includes SecurizeString, it is purely extending String.
-* to_digest should be able to take a string that is the algorithm name.
 * RSA encoding/decoding should auto-detect if the given key is public or private,
   and use the correct encoding routine?  What about key confusion?; this won't
   generate an error if you use the wrong key.
-* RSA signature digests: accept Digest hashes, not just OpenSSL::Digest hashes.
   
 
 = License

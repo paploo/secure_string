@@ -11,14 +11,14 @@ describe "SecurityString" do
     it 'should be able to convert to a hex string' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        ss.to_hex.should == message[:hex]
+        ss.data_to_hex.should == message[:hex]
       end
     end
   
     it 'should be able to convert to an int value' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        ss.to_i.should == message[:int]
+        ss.data_to_i.should == message[:int]
       end
     end
   
@@ -34,9 +34,17 @@ describe "SecurityString" do
       @messages.each do |message|
         s = String.new(message[:string])
         ss = SecureString.new(message[:string])
-        ss.inspect.should include(ss.to_hex)
+        ss.inspect.should include(ss.data_to_hex)
         ss.inspect.should_not include(s.to_s)
       end
+    end
+    
+    it 'should return appropriate values on an empty string' do
+      ss = SecureString.new('')
+      
+      ss.data_to_hex.should == ''
+      ss.data_to_i.should be_kind_of(Integer)
+      ss.data_to_i.should == 0
     end
     
   end

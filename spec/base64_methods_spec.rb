@@ -41,6 +41,7 @@ describe "SecureString" do
         ss.from_base64.should == message[:string]
       end
     end
+    
   end
   
 end

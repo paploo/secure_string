@@ -122,30 +122,31 @@ describe "SecureString" do
       
       it 'should default to signing with SHA-256' do
         encrypted_message = @message.to_rsa(@bob_pub_key)
-        encrypted_message.sign(@alice_pvt_key).should == encrypted_message.sign(@alice_pvt_key, OpenSSL::Digest::SHA256.new)
+        encrypted_message.sign(@alice_pvt_key).should == encrypted_message.sign(@alice_pvt_key, 'SHA-256')
       end
       
-      it 'should allow signing with other digest' do
+      it 'should allow signing with other digests' do
         encrypted_message = @message.to_rsa(@bob_pub_key)
-        comparison_digest_klass = OpenSSL::Digest::SHA256
-        [OpenSSL::Digest::SHA512, OpenSSL::Digest::MD5, OpenSSL::Digest::SHA1].each do |digest_klass|
-          next if digest_klass == comparison_digest_klass
-          signature = encrypted_message.sign(@alice_pvt_key, digest_klass.new)
-          signature.should_not == encrypted_message.sign(@alice_pvt_key, comparison_digest_klass.new)
+        comparison_digest_method = 'SHA-256'
+        ['SHA-512', 'MD5', 'SHA-1'].each do |digest_method|
+          next if digest_method == comparison_digest_method
+          signature = encrypted_message.sign(@alice_pvt_key, digest_method)
+          signature.should_not == encrypted_message.sign(@alice_pvt_key, comparison_digest_method)
         end
       end
       
-      it 'should allow passing the digest method as an instance or class' do
+      it 'should allow passing the digest method as an instance, class, or string' do
         encrypted_message = @message.to_rsa(@bob_pub_key)
         [OpenSSL::Digest::SHA512, OpenSSL::Digest::SHA256, OpenSSL::Digest::MD5, OpenSSL::Digest::SHA1].each do |digest_klass|
-          signature1 = encrypted_message.sign(@alice_pvt_key, digest_klass.new)
-          signature2 = encrypted_message.sign(@alice_pvt_key, digest_klass)
-          signature1.should == signature2
+          signature1 = encrypted_message.sign(@alice_pvt_key, digest_klass)
+          signature2 = encrypted_message.sign(@alice_pvt_key, digest_klass.new)
+          signature3 = encrypted_message.sign(@alice_pvt_key, digest_klass.name.split('::').last)
+          signature2.should == signature1
+          signature3.should == signature1
         end
       end
       
       it 'should work with Digest scoped digest classes' do
-        pending "TODO: postponing feature"
         encrypted_message = @message.to_rsa(@bob_pub_key)
         signature1 = encrypted_message.sign(@alice_pvt_key, Digest::SHA256)
         signature2 = encrypted_message.sign(@alice_pvt_key, OpenSSL::Digest::SHA256)
@@ -153,7 +154,6 @@ describe "SecureString" do
       end
       
       it 'should work with Digest scoped digest instances' do
-        pending "TODO: postponing feature"
         encrypted_message = @message.to_rsa(@bob_pub_key)
         signature1 = encrypted_message.sign(@alice_pvt_key, Digest::SHA256.new)
         signature2 = encrypted_message.sign(@alice_pvt_key, OpenSSL::Digest::SHA256.new)

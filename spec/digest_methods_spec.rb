@@ -1,5 +1,3 @@
-# Make sure to test that the cipher methods are from openssl and not jsut digest?
-
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe "SecureString" do
@@ -18,16 +16,16 @@ describe "SecureString" do
       end
       
       it 'should encode as a SecureString' do
-        @message.to_digest(OpenSSL::Digest::MD5).should be_kind_of(SecureString)
-        @message.to_digest(OpenSSL::Digest::SHA512).should be_kind_of(SecureString)
+        @message.to_digest('MD5').should be_kind_of(SecureString)
+        @message.to_digest('SHA-512').should be_kind_of(SecureString)
       end
       
       it 'should contain the raw value, not the hex value' do
-        md5 = @message.to_digest(OpenSSL::Digest::MD5)
+        md5 = @message.to_digest('MD5')
         md5.should_not == @message_md5_hex
         md5.to_hex.should == @message_md5_hex
         
-        sha512 = @message.to_digest(OpenSSL::Digest::SHA512)
+        sha512 = @message.to_digest('SHA-512')
         sha512.should_not == @message_sha512_hex
         sha512.to_hex.should == @message_sha512_hex
       end

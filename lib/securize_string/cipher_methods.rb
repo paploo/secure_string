@@ -78,13 +78,13 @@ module SecurizeString
       # combination on two different messages as this weakens the security.
       def to_aes(key, iv)
         key_len = (key.bytesize * 8)
-        return self.class.new( to_cipher("aes-#{key_len.to_i}-cbc", key, iv) )
+        return self.class.new( to_cipher("aes-#{key_len}-cbc", key, iv) )
       end
       
       # Given an AES key and init vector, AES-CBC decode the data.
       def from_aes(key, iv)
         key_len = (key.bytesize * 8)
-        return self.class.new( from_cipher("aes-#{key_len.to_i}-cbc", key, iv) )
+        return self.class.new( from_cipher("aes-#{key_len}-cbc", key, iv) )
       end
       
     end

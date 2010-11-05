@@ -1,8 +1,7 @@
 require 'base64'
 
 module SecurizeString
-  # Adds the base methods necessary to make String or a String subclass handle
-  # binary data better.
+  # Adds base methods that help in interpreting the binary data represented by the String value of an object.
   # See BinaryStringDataMethods::ClassMethods and BinaryStringDataMethods::InstanceMethods for more deatils.
   module BinaryStringDataMethods
     
@@ -11,8 +10,7 @@ module SecurizeString
       mod.send(:include, InstanceMethods)
     end
     
-    # Adds basic binary data class methods to String or a String subclass, via
-    # an include of SecurizeString::BinaryStringDataMethods
+    # Adds basic binary data class methods via an include of SecurizeString::BinaryStringDataMethods.
     module ClassMethods
       
       # Creates a data string from one many kinds of values:
@@ -23,7 +21,7 @@ module SecurizeString
       def parse_data(mode = :data, value)
         case mode
         when :hex
-          hex_string = value.to_s
+          hex_string = value.to_s.delete('^0-9a-fA-F')
           data_string = [hex_string].pack('H' + hex_string.bytesize.to_s)
         when :data
           data_string = value.to_s
@@ -38,28 +36,19 @@ module SecurizeString
       
     end
     
-    # Adds basic binary data instance methods to String or a String subclass, via
-    # an include of SecurizeString::BinaryStringDataMethods.
+    # Adds basic binary data instance methods via an include of SecurizeString::BinaryStringDataMethods.
     module InstanceMethods
       
-      # Override the default inspect to return the hexidecimal
-      # representation of the data contained in this string.
-      def inspect
-        return "<#{to_hex}>"
-      end
-      
       # Returns the hexidecimal string representation of the data.
-      def to_hex
+      def data_to_hex
         return (self.to_s.empty? ? '' : self.to_s.unpack('H' + (self.to_s.bytesize*2).to_s)[0])
       end
       
       # Returns the data converted from hexidecimal into an integer.
       # This is usually as a BigInt.
       #
-      # WARNING: If the data string is empty, then this returns -1, as there is no
-      # integer representation of the absence of data.
-      def to_i
-        return (self.to_s.empty? ? -1 : to_hex.hex)
+      def data_to_i
+        return (self.to_s.empty? ? 0 : self.data_to_hex.hex)
       end
       
     end

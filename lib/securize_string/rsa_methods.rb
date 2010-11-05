@@ -55,9 +55,10 @@ module SecurizeString
       
       # Signs the given message using hte given private key.
       #
-      # By default, signs using SHA256, but another digest object can be given.
-      def sign(private_key, digest_obj=OpenSSL::Digest::SHA256.new)
-        digest_obj = (digest_obj.kind_of?(Class) ? digest_obj.new : digest_obj)
+      # By default, verifies using SHA256, but another digest method can be given
+      # using the list of DigestFinder supported digests.
+      def sign(private_key, digest_method='SHA-256')
+        digest_obj = DigestFinder.find(digest_method).new
         key = OpenSSL::PKey::RSA.new(private_key)
         return self.class.new( key.sign(digest_obj, self) )
       end
@@ -65,9 +66,10 @@ module SecurizeString
       # Verifies the given signature matches the messages digest, using the
       # signer's public key.
       #
-      # By default, verifies using SHA256, but another digest object can be given.
-      def verify?(public_key, signature, digest_obj=OpenSSL::Digest::SHA256.new)
-        digest_obj = (digest_obj.kind_of?(Class) ? digest_obj.new : digest_obj)
+      # By default, verifies using SHA256, but another digest method can be given
+      # using the list of DigestFinder supported digests.
+      def verify?(public_key, signature, digest_method='SHA-256')
+        digest_obj = DigestFinder.find(digest_method).new
         key = OpenSSL::PKey::RSA.new(public_key)
         return key.verify(digest_obj, signature.to_s, self)
       end
