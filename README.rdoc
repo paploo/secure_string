@@ -9,8 +9,127 @@ functionality that can be used individually:
 * Secure string support: Easy methods for RSA encryption, AES encoding, and
   SHA/MD5 digest hashing, of the data in the strings.
   
+One of the basic philosophies of SecureString is that it does not override--only
+extends--the feature set of String.  However there is one difference that
+was added: +inspect+ is overridden to return the data as a hex-string, rather
+than using the specified character encoding.  This does not mean it's value has
+in any way changed, just its presentation.  Use +to_s+ to recover the standard
+String version of the value.
+
+WARNING: it is important to note that the String method +length+ is not a good
+measure of a byte string's length, as depending on the encoding, it may count
+multibyte characters as a single element.  To ensure that you get the byte
+length, use the standard string method +bytesize+.
+
 = Examples
+
+== Basic Usage
+
+Creation of a SecureString from an normal String instance is easy:
+
+  ss = SecureString.new("Hello World!")
+  ss.to_s    --> "Hello World!"
+  ss.inspect --> "<48656c6c6f20576f726c6421>"
+
+Additionally, you can get at the byte data in various ways:
+
+  ss.to_hex    --> "48656c6c6f20576f726c6421"
+  ss.to_i      --> 22405534230753928650781647905
+  ss.to_base64 --> "SGVsbG8gV29ybGQh"
+
+One can initialize a SecureString from any of these types like so:
+
+  ss1 = SecureString.new(:data, "Hello World!")
+  ss2 = SecureString.new(:hex, "48656c6c6f20576f726c6421")
+  ss3 = SecureString.new(:int, 22405534230753928650781647905)
+  ss4 = SecureString.new(:base64, "SGVsbG8gV29ybGQh")
   
+  ss1 == ss --> true
+  ss2 == ss --> true
+  ss3 == ss --> true
+  ss4 == ss --> true
+
+All of these create equal-valued strings to <tt>"HelloWorld!"</tt>.
+
+== Base64 Methods Overview
+
+The SecureString::Base64Methods module adds +to_base64+, which we've seen:
+
+  SecureString.new("Hello World!").to_base64 --> "SGVsbG8gV29ybGQh"
+
+It also adds +from_base64+, which can decode a Base64 encoded string.  The
+following example shows the various ways of decoding Bas64 data:
+
+  SecureString.new(:base64, "SGVsbG8gV29ybGQh") == "Hello World!"    --> true
+  SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"             --> false
+  SecureString.new("SGVsbG8gV29ybGQh").from_base64 == "Hello World!" --> true
+
+== Digest Methods Overview
+
+The SecureString::DigestMethods module adds convenience methods for calculating
+cryptographic hash sums for the data in the string.  Note that since SecureString
+handles binary data well, the string value returns is NOT the hex string; to get
+the hex digest, simply call to_hex:
+
+  ss.to_md5.to_hex
+    --> "ed076287532e86365e841e92bfc50d8c"
+  ss.to_sha1.to_hex
+    --> "2ef7bde608ce5404e97d5f042f95f89f1c232871"
+  ss.to_sha256.to_hex
+     --> "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069"
+  ss.to_digest(OpenSSL::Digest::SHA512).to_hex
+    --> "861844d6704e8573fec34d967e20bcfef3d424cf48be04e6dc08f2bd58c729743371015ead891cc3cf1c9d34b49264b510751b1ff9e537937bc46b5d6ff4ecc8"
+
+== RSA Methods Overview
+
+The SecureString::RSAMethods module adds convenience methods for RSA key
+generation, encryption, and signing, and verification.
+
+The basic features of this module are illustrated on the following worked example:
+
+First, alice and bob much each generate their public and private keys.  For the
+example, we do it like so:
+
+  alice_pvt_key, alice_pub_key = SecureString.rsa_keygen
+  bob_pvt_key, bob_pub_key = SecureString.rsa_keygen
+
+Now, Alice creates a message and encrypts it for Bob and signs it.
+
+  message = SecureString.new("Hello World")
+  encrypted_message = message.to_rsa(bob_pub_key)
+  signature = encrypted_message.sign(alice_pvt_key)
+
+Alice sends Bob the data in +encrypted_message+ and +signature+.  Bob verifies
+the message's signature, and then decrypts it:
+
+  is_verified = encrypted_message.verify?(alice_pub_key, signature)
+  if( is_verified )
+    decrypted_message = encrypted_message.from_rsa(bob_pvt_key).to_s
+  else
+    raise RuntimeError, "This is not from Alice!"
+  end
+
+The value of Alice's original +message+ variable, and Bob's +decrypted_message+
+should be identical.
+
+== Cipher Methods Overview
+
+The SecureString::CipherMethods module adds convenience methods for block cipher
+encryption, particularly for the AES-256-CBC block cipher.
+
+The following methods illustrate a sample session for the default AES-256-CBC
+cipher:
+
+  # Generate a random key and initialization vector.
+  key, iv = SecureString.aes_keygen
+  
+  # Now encrypt a message:
+  message = SecureString.new("Hello World!")
+  cipher_text = message.to_aes(key, iv)
+  
+  # Now decrypt the message:
+  decoded_text = cipher_text.from_aes(key, iv)
+
 = Contact
 
 If you have any questions, comments, concerns, patches, or bugs, you can contact
@@ -25,11 +144,11 @@ mailto:jeff@paploo.net
 = Version History
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
                       * Added a full suite of spec tests.
-                      * [FEATURE] Can get a list of supported ciphers.
-                      * [FEATURE] Auto-determine AES key length in +to_aes+ and +from_aes+.
-                      * [CHANGE] RSA now defaults to 2048-bit keys instead of just 1024.
-                      * [FIX] Init from integer works now.
-                      * [FIX] RSA signatures can take digest classes, not just instances.
+                      * (FEATURE) Can get a list of supported ciphers.
+                      * (FEATURE) Auto-determine AES key length in +to_aes+ and +from_aes+.
+                      * (CHANGE) RSA now defaults to 2048-bit keys instead of just 1024.
+                      * (FIX) Init from integer works now.
+                      * (FIX) RSA signatures can take digest classes, not just instances.
 [0.9.0 - 2010-Nov-03] Initial release.
                       * Feature complete, but lacks spec tests and examples.
                       
@@ -38,6 +157,7 @@ mailto:jeff@paploo.net
 * Add complete spec tests.
 * Add examples.
 * Pull out all methods into modules so that it can be an extension of all Strings.
+* Add a +to_ss+ or +to_secure+ method to String for easy conversion.
 * Explore how encodings affect the data.  What about when finding length?  What
   methods should be recommended to users for finding byte-length vs. char length.
 * RSA encoding/decoding should auto-detect if the given key is public or private,

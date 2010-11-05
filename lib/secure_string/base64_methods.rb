@@ -1,12 +1,16 @@
 require 'base64'
 
 class SecureString < String
+  # Adds methods for Base64 conversion.
+  # See Base64Methods::InstanceMethods for more details.
   module Base64Methods
     
     def self.included(mod)
       mod.send(:include, InstanceMethods)
     end
     
+    # Adds instance methods for Base64 support via inclusion of
+    # SecureString::Base64Methods to a class.
     module InstanceMethods
       
       # Encodes to Base64.  By default, the output is made URL safe, which means all

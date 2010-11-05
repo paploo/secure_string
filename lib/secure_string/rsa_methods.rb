@@ -1,6 +1,8 @@
 require 'openssl'
 
 class SecureString < String
+  # Adds methods for OpenSSL::PKey::RSA support.
+  # See RSAMethods::ClassMethods and RSAMethods::InstanceMethods for more details.
   module RSAMethods
     
     def self.included(mod)
@@ -8,6 +10,8 @@ class SecureString < String
       mod.send(:include, InstanceMethods)
     end
     
+    # Adds class methods for OpenSSL::PKey::RSA support via inclusion of
+    # SecureString::RSAMethods to a class.
     module ClassMethods
       
       # A convenience method for generating random public/private RSA key pairs.
@@ -30,6 +34,8 @@ class SecureString < String
       
     end
     
+    # Adds instance methods for OpenSSL::PKey::RSA support via inclusion of
+    # SecureString::RSAMethods to a class.
     module InstanceMethods
       
       # Given an RSA public key, it RSA encrypts the data string.

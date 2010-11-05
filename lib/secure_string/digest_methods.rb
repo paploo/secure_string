@@ -1,12 +1,16 @@
 require 'openssl'
   
 class SecureString < String
+  # Adds methods for OpenSSL::Digest support.
+  # See DigestMethods::ClassMethods and DigestMethods::InstanceMethods for more details.
   module DigestMethods
     
     def self.included(mod)
       mod.send(:include, InstanceMethods)
     end
     
+    # Adds instance methods for OpenSSL::Digest support via inclusion of
+    # SecureString::DigestMethods to a class.
     module InstanceMethods
       
       # Returns the digest of the byte string as a SecureString, using the passed OpenSSL object.
@@ -17,6 +21,11 @@ class SecureString < String
       # Returns the MD5 of the byte string as a SecureString.
       def to_md5
         return to_digest( OpenSSL::Digest::MD5.new )
+      end
+      
+      # Returns the SHA1 of the byte string as SecureString
+      def to_sha1
+        return to_digest( OpenSSL::Digest::SHA1.new )
       end
       
       # Returns the SHA2 of the byte string as a SecureString.
