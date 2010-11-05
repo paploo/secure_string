@@ -2,7 +2,7 @@ require 'rake'
 
 Gem::Specification.new do |s|
   s.name = 'secure_string'
-  s.version = '1.0.0'
+  s.version = '1.1.0'
   
   s.required_ruby_version = '>= 1.9.2'
   

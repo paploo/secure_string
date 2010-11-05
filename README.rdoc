@@ -21,6 +21,43 @@ measure of a byte string's length, as depending on the encoding, it may count
 multibyte characters as a single element.  To ensure that you get the byte
 length, use the standard string method +bytesize+.
 
+= Installation & Configuration
+
+== Installation
+
+Install from gem, and add the following to your script:
+
+  require 'secure_string'
+
+By default, this creates the SecureString class, which is completely configured
+and ready to go like so:
+
+  SecureString.new("foo")
+
+== Optional Configuration
+
+Some people like to monkey patch String to translate to a
+SecureString like so:
+
+  # This is an optional configuration:
+  class String
+    def to_ss
+      return SecureString.new(self)
+    end
+  end
+
+Alternatively, if you would like to add the SecureString methods directly onto
+all Strings, simply add the following code to your program:
+
+  # This is an optional configuration:
+  class String
+    include SecurizeString
+  end
+
+Unless you already have code that modifies String in a conflicting way--or code
+that depends on the value of +inspect+, this should not change the behavior of
+your existing code.
+
 = Examples
 
 == Basic Usage
@@ -142,6 +179,8 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
+[1.1.0 - 2030-Nov-04] Extracted methods into a module that can be easily included
+                      on any String class.
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
                       * Added a full suite of spec tests.
                       * (FEATURE) Can get a list of supported ciphers.
@@ -154,9 +193,6 @@ mailto:jeff@paploo.net
                       
 = TODO List
 
-* Add complete spec tests.
-* Add examples.
-* Pull out all methods into modules so that it can be an extension of all Strings.
 * Add a +to_ss+ or +to_secure+ method to String for easy conversion.
 * to_digest should be able to take a string that is the algorithm name.
 * Explore how encodings affect the data.  What about when finding length?  What
