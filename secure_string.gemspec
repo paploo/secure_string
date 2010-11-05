@@ -2,9 +2,9 @@ require 'rake'
 
 Gem::Specification.new do |s|
   s.name = 'secure_string'
-  s.version = '1.1.0'
+  s.version = '1.1.1'
   
-  s.required_ruby_version = '>= 1.9.2'
+  s.required_ruby_version = '>= 1.9.0'
   
   s.authors = ['Jeff Reinecke']
   s.email = 'jeff@paploo.net'

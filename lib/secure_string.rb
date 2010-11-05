@@ -18,3 +18,5 @@ class SecureString < String
   end
   
 end
+
+require_relative 'byte_string'

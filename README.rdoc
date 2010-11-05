@@ -19,13 +19,20 @@ String version of the value.
 WARNING: it is important to note that the String method +length+ is not a good
 measure of a byte string's length, as depending on the encoding, it may count
 multibyte characters as a single element.  To ensure that you get the byte
-length, use the standard string method +bytesize+.
+length, use the standard string method +bytesize+.  See the section on
+String Encodings for more detail.
 
 = Installation & Configuration
 
 == Installation
 
-Install from gem, and add the following to your script:
+SecureString is currently only supported in Ruby 1.9.x.
+
+To install, first install the gem:
+
+  gem install secure_string
+
+Then require the gem like so:
 
   require 'secure_string'
 
@@ -167,6 +174,61 @@ cipher:
   # Now decrypt the message:
   decoded_text = cipher_text.from_aes(key, iv)
 
+= String Encodings
+
+== Overview
+
+Starting in Ruby 1.9.x, String instances manage their own encodings.  For example,
+a string with Unicode characters are usually encoded as UTF-8, while a lot of
+source is still written in US-ASCII.
+
+Binary data is independent of the encoding that encodes it, however using the
+binary data when it is assigned a multi-byte character encoding strategy can
+lead to a few surprises.
+
+For example, for a Unicode string, the +length+ method returns the number of
+characters in the string, while +bytesize+ returns the number of bytes encoded
+in the string:
+
+  s = "Resum\u00E9"
+  s.encoding --> UTF-8
+  s.length   --> 6
+  s.bytesize --> 7
+
+== SecureString Encoding
+
+SecureString's basic design philosophy is to--as much as possible--only extend the
+behavior of String, not replace it.  <b>Therefore, SecureString does NOT affect the
+encoding of the string it is using.</b>
+
+This is normally not a problem--as long as you use +bytesize+ instead of +length+
+to get the byte count of the data in the string.
+
+In rare cases, you may want to change a String to the ASCII-8BIT binary
+encoding without changing its data.  To accomplish this, one should call
++force_encoding+ like so:
+
+  s = "Resum\u00E9"
+  s.force_encoding('BINARY')
+  s.encoding --> ASCII-8BIT
+  s.length   --> 7
+  s.bytesize --> 7
+  
+Note that when you do this, equality tests can be broken like so:
+
+  s = "Resum\u00E9"
+  b = s.dup.force_encoding('BINARY')
+  s == b                       --> false
+  s.bytes.to_a == b.bytes.to_a --> true
+  
+== ByteString
+
+For added convenience, a ByteString class has been added to this library.
+ByteString is a minimal subclass of SecureString that automatically calls
++force_encoding+ on initialization, changing the encoding to ASCII-8BIT.
+
+Normally, one will not need this class, as Secure String will be good enough.
+  
 = Contact
 
 If you have any questions, comments, concerns, patches, or bugs, you can contact
@@ -179,7 +241,9 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
-[1.1.0 - 2030-Nov-04] Extracted methods into a module that can be easily included
+[1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x.
+                      * Tested in 1.9.1 and 1.9.2.
+[1.1.0 - 2010-Nov-04] Extracted methods into a module that can be easily included
                       on any String class.
 [1.0.0 - 2010-Nov-04] Added Tests, Examples, and Bugfixes
                       * Added a full suite of spec tests.
@@ -193,12 +257,12 @@ mailto:jeff@paploo.net
                       
 = TODO List
 
-* Add a +to_ss+ or +to_secure+ method to String for easy conversion.
+* Rename the base +inspect+ and +to_i+ methods and only put them on SecureString
+  so that if String includes SecurizeString, it is purely extending String.
 * to_digest should be able to take a string that is the algorithm name.
-* Explore how encodings affect the data.  What about when finding length?  What
-  methods should be recommended to users for finding byte-length vs. char length.
 * RSA encoding/decoding should auto-detect if the given key is public or private,
-  and use the correct encoding routine?  What about key confusion?
+  and use the correct encoding routine?  What about key confusion?; this won't
+  generate an error if you use the wrong key.
 * RSA signature digests: accept Digest hashes, not just OpenSSL::Digest hashes.
   
 

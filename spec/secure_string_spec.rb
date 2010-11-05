@@ -1,3 +1,5 @@
+#encoding: UTF-8
+
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe "SecureString" do
@@ -54,6 +56,35 @@ describe "SecureString" do
     newline_count = @messages.map {|message| message[:base64].delete("^\n").length}
     newline_count.should include(0)
     newline_count.select {|nl_count| nl_count > 1}.should_not be_empty
+  end
+  
+  describe 'Encodings' do
+    
+    before(:each) do
+      @unicode_string = "A resumé for the moose; Eine Zusammenfassung für die Elche; Резюме для лосей; アメリカヘラジカのための概要; Μια περίληψη για τις άλκες; 麋的一份簡歷; Un résumé pour les orignaux."
+    end
+    
+    it 'should NOT change the encoding of a string' do
+      @unicode_string.encoding.should == Encoding.find("UTF-8")
+      ss = SecureString.new(@unicode_string)
+      ss.encoding.should == @unicode_string.encoding
+    end
+    
+    it 'should NOT change the length to the byte count for UTF-8 encoded strings.' do
+      @unicode_string.encoding.should == Encoding.find("UTF-8")
+      ss = SecureString.new(@unicode_string)
+      ss.length.should < ss.bytesize
+    end
+    
+    it 'should allow forced transcoding to binary' do
+      ss = SecureString.new(@unicode_string)
+      
+      ss.encoding.should == Encoding.find("UTF-8")
+      ss.force_encoding("Binary")
+      ss.encoding.should == Encoding.find("ASCII-8BIT")
+      @unicode_string.encoding.should == Encoding.find("UTF-8")
+    end
+    
   end
   
 end
