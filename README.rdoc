@@ -158,6 +158,7 @@ mailto:jeff@paploo.net
 * Add examples.
 * Pull out all methods into modules so that it can be an extension of all Strings.
 * Add a +to_ss+ or +to_secure+ method to String for easy conversion.
+* to_digest should be able to take a string that is the algorithm name.
 * Explore how encodings affect the data.  What about when finding length?  What
   methods should be recommended to users for finding byte-length vs. char length.
 * RSA encoding/decoding should auto-detect if the given key is public or private,
