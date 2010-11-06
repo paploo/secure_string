@@ -55,7 +55,7 @@ module SecurizeString
         cipher.encrypt # MUST set the mode BEFORE setting the key and iv!
         cipher.key = key
         cipher.iv = iv
-        msg = cipher.update(self)
+        msg = cipher.update(self.to_s)
         msg << cipher.final
         return self.class.new(msg)
       end
@@ -67,7 +67,7 @@ module SecurizeString
         cipher.decrypt # MUST set the mode BEFORE setting the key and iv!
         cipher.key = key
         cipher.iv = iv
-        msg = cipher.update(self)
+        msg = cipher.update(self.to_s)
         msg << cipher.final
         return self.class.new(msg)
       end

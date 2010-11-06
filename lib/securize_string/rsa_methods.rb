@@ -42,15 +42,17 @@ module SecurizeString
       #
       # Note that the key must be 11 bytes longer than the data string or it doesn't
       # work.
-      def to_rsa(public_key)
-        key = OpenSSL::PKey::RSA.new(public_key)
-        return self.class.new( key.public_encrypt(self) )
+      def to_rsa(key)
+        key = OpenSSL::PKey::RSA.new(key)        
+        cipher_text = key.private? ? key.private_encrypt(self.to_s) : key.public_encrypt(self.to_s)
+        return self.class.new(cipher_text)
       end
       
       # Given an RSA private key, it decrypts the data string back into the original text.
-      def from_rsa(private_key)
-        key = OpenSSL::PKey::RSA.new(private_key)
-        return self.class.new( key.private_decrypt(self) )
+      def from_rsa(key)
+        key = OpenSSL::PKey::RSA.new(key)
+        plain_text = key.private? ? key.private_decrypt(self.to_s) : key.public_decrypt(self.to_s)
+        return self.class.new(plain_text)
       end
       
       # Signs the given message using hte given private key.
@@ -72,6 +74,24 @@ module SecurizeString
         digest_obj = DigestFinder.find(digest_method).new
         key = OpenSSL::PKey::RSA.new(public_key)
         return key.verify(digest_obj, signature.to_s, self)
+      end
+      
+      # Interpret the conetents of the string as an RSA key, and determine if it is public.
+      #
+      # Even though private keys contain all the information necessary to reconstitute
+      # a public key, this method returns false.  This is in contrast to the
+      # behavior of OpenSSL::PKey::RSA, which return true for both public and
+      # private checks with a private key (since it reconstituted the public
+      # key and it is available for use).
+      def public_rsa_key?
+        # There is an interesting bug I came across, where +public?+ can be true on a private key!
+        return !private_rsa_key?
+      end
+      
+      # Interpret the conents of the string as an RSA key, and determine if it is private.
+      def private_rsa_key?
+        key = OpenSSL::PKey::RSA.new(self.to_s)
+        return key.private?
       end
       
     end

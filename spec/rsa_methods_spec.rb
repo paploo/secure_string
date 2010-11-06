@@ -61,14 +61,29 @@ describe "SecureString" do
         end
       end
       
+      it 'should be able to determine if the key is public or private' do
+        pvt_key, pub_key = SecureString.rsa_keygen
+        
+        pvt_key.public_rsa_key?.should be_false
+        pvt_key.private_rsa_key?.should be_true
+        
+        pub_key.public_rsa_key?.should be_true
+        pub_key.private_rsa_key?.should be_false
+      end
+      
     end
     
     describe "Encryption" do
       
       before(:all) do
         @key_length = 128
-        @pvt_key = SecureString.new(:hex, "2d2d2d2d2d424547494e205253412050524956415445204b45592d2d2d2d2d0a4d47454341514143455143364c704764426d334a78495048513945345537443141674d424141454345474c62517a6e724a6652525762433365474b3561656b430a4351446d633569312f5669666277494a414d37536b4534554b7750624167682b7831316430564274395149494a4648372f346f784a364d4343474e646e3933330a4a43774d0a2d2d2d2d2d454e44205253412050524956415445204b45592d2d2d2d2d0a")
-        @pub_key = SecureString.new(:hex, "2d2d2d2d2d424547494e20525341205055424c4943204b45592d2d2d2d2d0a4d426743455143364c704764426d334a78495048513945345537443141674d424141453d0a2d2d2d2d2d454e4420525341205055424c4943204b45592d2d2d2d2d0a")
+        
+        #@pvt_key = SecureString.new(:hex, "2d2d2d2d2d424547494e205253412050524956415445204b45592d2d2d2d2d0a4d47454341514143455143364c704764426d334a78495048513945345537443141674d424141454345474c62517a6e724a6652525762433365474b3561656b430a4351446d633569312f5669666277494a414d37536b4534554b7750624167682b7831316430564274395149494a4648372f346f784a364d4343474e646e3933330a4a43774d0a2d2d2d2d2d454e44205253412050524956415445204b45592d2d2d2d2d0a")
+        @pvt_key = SecureString.new("-----BEGIN RSA PRIVATE KEY-----\nMGECAQACEQC6LpGdBm3JxIPHQ9E4U7D1AgMBAAECEGLbQznrJfRRWbC3eGK5aekC\nCQDmc5i1/VifbwIJAM7SkE4UKwPbAgh+x11d0VBt9QIIJFH7/4oxJ6MCCGNdn933\nJCwM\n-----END RSA PRIVATE KEY-----")
+        
+        #@pub_key = SecureString.new(:hex, "2d2d2d2d2d424547494e20525341205055424c4943204b45592d2d2d2d2d0a4d426743455143364c704764426d334a78495048513945345537443141674d424141453d0a2d2d2d2d2d454e4420525341205055424c4943204b45592d2d2d2d2d0a")
+        @pub_key = SecureString.new("-----BEGIN RSA PUBLIC KEY-----\nMBgCEQC6LpGdBm3JxIPHQ9E4U7D1AgMBAAE=\n-----END RSA PUBLIC KEY-----")
+        
         @message = SecureString.new("Hello")
       end
       
@@ -81,11 +96,19 @@ describe "SecureString" do
       
       # We cannot independently test encryption because it changes everytime
       # thanks to padding generation.
-      it 'should encrypt and decrypy a message' do
+      it 'should encrypt and decrypt a message' do
         encrypted_message = @message.to_rsa(@pub_key)
         (encrypted_message.bytesize * 8).should == @key_length
         
         decrypted_message = encrypted_message.from_rsa(@pvt_key)
+        decrypted_message.should == @message
+      end
+      
+      it 'should encrypt and decrypt a message swapping pub and pvt keys' do
+        encrypted_message = @message.to_rsa(@pvt_key)
+        (encrypted_message.bytesize * 8).should == @key_length
+        
+        decrypted_message = encrypted_message.from_rsa(@pub_key)
         decrypted_message.should == @message
       end
       
@@ -102,22 +125,24 @@ describe "SecureString" do
         @message = SecureString.new("Hello")
       end
       
-      it 'should sign and verify a message using a private key' do
+      it 'should do a standard encrypt/sign then verify/decrypt cycle' do
         # Alice encrypts a message for Bob and signs is.
-        @encrypted_message = @message.to_rsa(@bob_pub_key)
-        @signature = @encrypted_message.sign(@alice_pvt_key)
+        encrypted_message = @message.to_rsa(@bob_pub_key)
+        signature = encrypted_message.sign(@alice_pvt_key)
+        encrypted_message.should_not be_empty
+        signature.should_not be_empty
         
         # Verify it came from Alice.
-        is_verified = @encrypted_message.verify?(@alice_pub_key, @signature)
+        is_verified = encrypted_message.verify?(@alice_pub_key, signature)
         is_verified.should be_true
         
         # Verify it did not come from Bob.
-        is_verified = @encrypted_message.verify?(@bob_pub_key, @signature)
+        is_verified = encrypted_message.verify?(@bob_pub_key, signature)
         is_verified.should be_false
         
         # Bob should now decrypt it
-        @decrypted_message = @encrypted_message.from_rsa(@bob_pvt_key)
-        @decrypted_message.should == @message
+        decrypted_message = encrypted_message.from_rsa(@bob_pvt_key)
+        decrypted_message.should == @message
       end
       
       it 'should default to signing with SHA-256' do

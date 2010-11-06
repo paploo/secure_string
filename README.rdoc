@@ -239,6 +239,8 @@ mailto:jeff@paploo.net
                       * Added some documentation and tests on String encodings.
                       * Added more spec tests.
                       * (FEATURE) Digest methods may be supplied via string now.
+                      * (FEATURE) RSA encryption works with both public and private keys.
+                      * (FEATURE) RSA keys encoded as SecureString can be asked if public or private.
                       * (CHANGE) BinaryStringDataMethods now is non-clobbering and independent.
                       * (CHANGE) An empty string's integer value is now zero.
                       * (FIX) Non-hex characters are ignored when accepting hex data input.
@@ -256,9 +258,9 @@ mailto:jeff@paploo.net
                       
 = TODO List
 
-* RSA encoding/decoding should auto-detect if the given key is public or private,
-  and use the correct encoding routine?  What about key confusion?; this won't
-  generate an error if you use the wrong key.
+* See what happens when including SecurizeString into an object that is not a String.
+  What are the expected root methods?  +to_s+, <tt>self.new(string)</tt> are two
+  that I know of.
   
 
 = License
