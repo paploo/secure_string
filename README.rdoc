@@ -234,6 +234,7 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
+[1.1.2 - 2010-Nov-08] Minor gemspec file change for compatability with bundler.
 [1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x; Bugfixes and minor changes.
                       * Tested in 1.9.1 and 1.9.2.
                       * Added some documentation and tests on String encodings.

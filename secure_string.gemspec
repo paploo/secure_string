@@ -1,8 +1,13 @@
-require 'rake'
+# Rake require fancy footwork is for bundler's benefit.
+begin
+  Rake
+rescue NameError
+  require 'rake'
+end
 
 Gem::Specification.new do |s|
   s.name = 'secure_string'
-  s.version = '1.1.1'
+  s.version = '1.1.2'
   
   s.required_ruby_version = '>= 1.9.0'
   
