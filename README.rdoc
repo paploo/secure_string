@@ -235,7 +235,10 @@ mailto:jeff@paploo.net
 
 = Version History
 [1.2.0 - 2010-May-17] Re-wrote Base64 module to address problems with RFC 2045 vs. RFC 4648 compatibility.
-                      You will need to readjust your code accordingly.
+                      * Added testing against source strings that generate incompatible encodings between RFC 2045 and RFC 4648.
+                      * (FEATURE) added option to strip newlines from the returned base64 string.
+                      * (CHANGE) to_base64 defaults to the standard Base64 instead of websafe Base64.
+                      * (FIX) added option to decode as websafe Base64.
 [1.1.2 - 2010-Nov-08] Minor gemspec file change for compatibility with bundler.
 [1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x; Bugfixes and minor changes.
                       * Tested in 1.9.1 and 1.9.2.
