@@ -79,7 +79,7 @@ Additionally, you can get at the byte data in various ways:
 
   ss.to_hex    --> "48656c6c6f20576f726c6421"
   ss.to_i      --> 22405534230753928650781647905
-  ss.to_base64 --> "SGVsbG8gV29ybGQh"
+  ss.to_base64 --> "SGVsbG8gV29ybGQh\n"
 
 One can initialize a SecureString from any of these types like so:
 
@@ -99,7 +99,7 @@ All of these create equal-valued strings to <tt>"HelloWorld!"</tt>.
 
 The SecureString::Base64Methods module adds +to_base64+, which we've seen:
 
-  SecureString.new("Hello World!").to_base64 --> "SGVsbG8gV29ybGQh"
+  SecureString.new("Hello World!").to_base64 --> "SGVsbG8gV29ybGQh\n"
 
 It also adds +from_base64+, which can decode a Base64 encoded string.  The
 following example shows the various ways of decoding Bas64 data:
@@ -234,7 +234,9 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
-[1.1.2 - 2010-Nov-08] Minor gemspec file change for compatability with bundler.
+[1.2.0 - 2010-May-17] Re-wrote Base64 module to address problems with RFC 2045 vs. RFC 4648 compatibility.
+                      You will need to readjust your code accordingly.
+[1.1.2 - 2010-Nov-08] Minor gemspec file change for compatibility with bundler.
 [1.1.1 - 2010-Nov-05] Backed down requirements to ruby 1.9.x; Bugfixes and minor changes.
                       * Tested in 1.9.1 and 1.9.2.
                       * Added some documentation and tests on String encodings.

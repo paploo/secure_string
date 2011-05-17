@@ -13,17 +13,33 @@ module SecurizeString
     # SecurizeString::Base64Methods to a class.
     module InstanceMethods
       
-      # Encodes to Base64.  By default, the output is made URL safe, which means all
-      # newlines are stripped out.  If you want standard formatted Base64 with
-      # newlines, then call this method with url_safe as false.
-      def to_base64(url_safe = true)
-        encoded_data = (url_safe ? Base64.urlsafe_encode64(self) : Base64.encode64(self))
-        return self.class.new( encoded_data )
+      # Encodes to Base64.
+      #
+      # By deault, this is the normal RFC 2045 Base64 encoding.
+      #
+      # If the <tt>url_safe</tt> option is set to true, then the RFC 4648
+      # encoding is used, which uses a slightly different encoding mechanism
+      # which is sometimes compatible, but often incompatible with RFC 2045.
+      #
+      # If the <tt>nobreak</tt> option is set to true, all line feeds are
+      # removed from the input.
+      def to_base64(opts={})
+        raise ArgumentError, "__method__ expects an argument hash but got #{opts.class.name}" unless opts.kind_of?(Hash)
+        data = (opts[:url_safe] ? Base64.urlsafe_encode64(self) : Base64.encode64(self))
+        data.delete!("\n\r") if opts[:no_break] # Delete on \n and \r is about 3x faster than gsub on /\s+/.
+        return data
       end
       
-      # Decode self as a Base64 data string and return the result.
-      def from_base64
-        return self.class.new( Base64.decode64(self) )
+      # Decodes from base64.
+      #
+      # By default, this decodes the normal RFC 2045 Base64.
+      #
+      # If the <tt>url_safe</tt> option is set to true, then it decodes the
+      # RFC 4648 encoding, which uses a slightly different encoding mechanism
+      # which is sometimes compatible, but often incompatible with RFC 2045.
+      def from_base64(opts={})
+        raise ArgumentError, "__method__ expects an argument hash but got #{opts.class.name}" unless opts.kind_of?(Hash)
+        return (opts[:url_safe] ? Base64.urlsafe_decode64(self) : Base64.decode64(self))
       end
       
     end

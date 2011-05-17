@@ -10,7 +10,7 @@ describe "Examples" do
     
     ss.to_hex.should == "48656c6c6f20576f726c6421"
     ss.to_i.should == 22405534230753928650781647905
-    ss.to_base64.should == "SGVsbG8gV29ybGQh"
+    ss.to_base64.should == "SGVsbG8gV29ybGQh\n"
     
     ss1 = SecureString.new(:data, "Hello World!")
     ss2 = SecureString.new(:hex, "48656c6c6f20576f726c6421")
@@ -24,7 +24,7 @@ describe "Examples" do
   end
   
   it 'should perform the base64 example' do
-    SecureString.new("Hello World!").to_base64.should == "SGVsbG8gV29ybGQh"
+    SecureString.new("Hello World!").to_base64.should == "SGVsbG8gV29ybGQh\n"
     
     (SecureString.new(:base64, "SGVsbG8gV29ybGQh") == "Hello World!"   ).should be_true
     (SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"            ).should be_false

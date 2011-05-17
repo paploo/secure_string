@@ -11,27 +11,30 @@ describe "SecureString" do
     it 'should convert self to Base64; not URL safe' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        # First make sure that line feeds are being put in somewhere.
-        ss.to_base64(false).should include("\n")
-        # Now, compare the data itself (no line-feeds).
-        ss.to_base64(false).delete("\n").should == message[:base64].delete("\n")
+        # Compare the data with the base ruby methods.
+        ss.to_base64.should == Base64.encode64(message[:string])
       end
     end
     
     it 'should convert self to Base64; URL safe' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        # First make sure that there are no line feeds.
-        ss.to_base64(true).should_not include("\n")
-        # Now compare the result with the line-feed less expected value.
-        ss.to_base64(true).should == message[:base64].delete("\n")
+        # Compare the result with the base ruby methods.
+        ss.to_base64(:url_safe => true).should == Base64.urlsafe_encode64(message[:string])
       end
     end
     
-    it 'should default to URL safe' do
+    it 'should convert base64 with no line breaks' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        ss.to_base64.should == ss.to_base64(true)
+        ss.to_base64(:no_break => true).should == message[:base64].delete("\n")
+      end
+    end
+    
+    it 'should default to NOT URL safe' do
+      @messages.each do |message|
+        ss = SecureString.new(message[:string])
+        ss.to_base64.should == ss.to_base64(:url_safe => false)
       end
     end
     
@@ -42,6 +45,13 @@ describe "SecureString" do
       end
     end
     
+    it 'should gracefully error if you provide something other than a hash to options.' do
+      @messages.each do |message|
+        ss = SecureString.new(message[:string])
+        (lambda {ss.to_base64(true)}).should raise_error(ArgumentError)
+        (lambda {ss.from_base64(true)}).should raise_error(ArgumentError)
+      end
+    end
   end
   
 end
