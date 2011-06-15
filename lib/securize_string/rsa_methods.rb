@@ -32,6 +32,18 @@ module SecurizeString
         return [private_key_obj, public_key_obj].map {|k| self.new( k.send(formatting_method) )}
       end
       
+      # A convenience method for extracting the private, public keypair from
+      # a private key.
+      #
+      # Returns the same format as +rsa_keygen+, but takes the private key as
+      # a string as a first argument.
+      def separate_keys(pvt_key, format = :pem)
+        private_key_obj = OpenSSL::PKey::RSA.new(pvt_key.to_s)
+        public_key_obj = private_key_obj.public_key
+        formatting_method = (format == :der ? :to_der : :to_pem)
+        return [private_key_obj, public_key_obj].map {|k| self.new( k.send(formatting_method) )}
+      end
+      
     end
     
     # Adds instance methods for OpenSSL::PKey::RSA support via inclusion of
@@ -92,6 +104,14 @@ module SecurizeString
       def private_rsa_key?
         key = OpenSSL::PKey::RSA.new(self.to_s)
         return key.private?
+      end
+      
+      # Interpret the contents of hte string asn a RSA private key, and extract
+      # the public key from it.  If the contents are not a private key, then it
+      # will raise an exception.
+      def extract_public_key(format = :pem)
+        pvt, pub = self.class.separate_keys(self, format)
+        return pub
       end
       
     end

@@ -234,6 +234,9 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
+[1.3.1 - 2011-Jun-15] Added public key extraction from private keys.
+                      * (FEATURE) Public keys can be extracted from private keys using either the
+                        separate_keys class method or the extract_public_key instance method.
 [1.3.0 - 2011-Jun-15] Ruby 1.8 compatibility.
                       * (FEATURE) Emulation urlsafe base64 encodings in ruby 1.8.
                       * (CHANGE) SecureString.new arguments changed to work with ruby 1.8.
@@ -274,7 +277,7 @@ mailto:jeff@paploo.net
 * See what happens when including SecurizeString into an object that is not a String.
   What are the expected root methods?  +to_s+, <tt>self.new(string)</tt> are two
   that I know of.
-  
+
 
 = License
 

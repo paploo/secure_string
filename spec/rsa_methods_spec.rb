@@ -71,6 +71,31 @@ describe "SecureString" do
         pub_key.private_rsa_key?.should be_false
       end
       
+      it 'should be able to separate a private key into a public and private key' do
+        [:pem, :der].each do |format|
+          pvt_key, pub_key = SecureString.rsa_keygen(2048, format)
+          
+          extracted_pvt_key, extracted_pub_key = SecureString.separate_keys(pvt_key.to_s, format)
+          
+          extracted_pvt_key.should be_kind_of(SecureString)
+          extracted_pub_key.should be_kind_of(SecureString)
+          
+          extracted_pvt_key.to_s.should == pvt_key.to_s
+          extracted_pub_key.to_s.should == pub_key.to_s
+        end
+      end
+      
+      it 'should be able to extract the public key from a private key string' do
+        [:pem, :der].each do |format|
+          pvt_key, pub_key = SecureString.rsa_keygen(2048, format)
+          
+          extracted_pub_key = pvt_key.extract_public_key(format)
+          
+          extracted_pub_key.should be_kind_of(SecureString)
+          extracted_pub_key.to_s.should == pub_key.to_s
+        end
+      end
+      
     end
     
     describe "Encryption" do
