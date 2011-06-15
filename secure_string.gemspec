@@ -7,9 +7,9 @@ end
 
 Gem::Specification.new do |s|
   s.name = 'secure_string'
-  s.version = '1.2.1'
+  s.version = '1.3.0'
   
-  s.required_ruby_version = '>= 1.9.0'
+  s.required_ruby_version = '>= 1.8.6'
   
   s.authors = ['Jeff Reinecke']
   s.email = 'jeff@paploo.net'

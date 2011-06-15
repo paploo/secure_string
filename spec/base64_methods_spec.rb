@@ -19,8 +19,10 @@ describe "SecureString" do
     it 'should convert self to Base64; URL safe' do
       @messages.each do |message|
         ss = SecureString.new(message[:string])
-        # Compare the result with the base ruby methods.
-        ss.to_base64(:url_safe => true).should == Base64.urlsafe_encode64(message[:string])
+        # If the version of ruby has :urlsafe_encode64, then we dynamically build to
+        # make sure the implementation hasn't changed; otherwise use the pre-cached string.
+        urlsafe_string = (Base64.respond_to?(:urlsafe_encode64)) ? Base64.urlsafe_encode64(message[:string]) : message[:urlsafe_base64]
+        ss.to_base64(:url_safe => true).should == urlsafe_string
       end
     end
     

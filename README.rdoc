@@ -83,10 +83,10 @@ Additionally, you can get at the byte data in various ways:
 
 One can initialize a SecureString from any of these types like so:
 
-  ss1 = SecureString.new(:data, "Hello World!")
-  ss2 = SecureString.new(:hex, "48656c6c6f20576f726c6421")
-  ss3 = SecureString.new(:int, 22405534230753928650781647905)
-  ss4 = SecureString.new(:base64, "SGVsbG8gV29ybGQh")
+  ss1 = SecureString.new("Hello World!", :type => :data)
+  ss2 = SecureString.new("48656c6c6f20576f726c6421", :type => :hex)
+  ss3 = SecureString.new(22405534230753928650781647905, :type => :int)
+  ss4 = SecureString.new("SGVsbG8gV29ybGQh", :type => :base64)
   
   ss1 == ss --> true
   ss2 == ss --> true
@@ -104,9 +104,9 @@ The SecureString::Base64Methods module adds +to_base64+, which we've seen:
 It also adds +from_base64+, which can decode a Base64 encoded string.  The
 following example shows the various ways of decoding Bas64 data:
 
-  SecureString.new(:base64, "SGVsbG8gV29ybGQh") == "Hello World!"    --> true
-  SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"             --> false
-  SecureString.new("SGVsbG8gV29ybGQh").from_base64 == "Hello World!" --> true
+  SecureString.new("SGVsbG8gV29ybGQh", :type => :base64) == "Hello World!"    --> true
+  SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"                      --> false
+  SecureString.new("SGVsbG8gV29ybGQh").from_base64 == "Hello World!"          --> true
 
 == Digest Methods Overview
 
@@ -234,6 +234,11 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
+[1.3.0 - 2011-Jun-15] Ruby 1.8 compatibility.
+                      * (FEATURE) Emulation urlsafe base64 encodings in ruby 1.8.
+                      * (CHANGE) SecureString.new arguments changed to work with ruby 1.8.
+                        Instead of specifying the argument type hint first, you now do that with an options hash.
+                        (You will get a descriptive error if you try to do it the old way.)
 [1.2.1 - 2011-Jun-15] Bugfixes
                       * (FIX) To/From Base64 methods were returning normal strings, making chaining impossible.
 [1.2.0 - 2011-May-17] Re-wrote Base64 module to address problems with RFC 2045 vs. RFC 4648 compatibility.

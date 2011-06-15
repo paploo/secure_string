@@ -1,4 +1,4 @@
-require_relative 'securize_string'
+require File.join(File.dirname(__FILE__), 'securize_string')
 
 # SecureString is a String subclass whose emphasis is on byte data rather than
 # human readable strings. class gives a number of conveniences, such
@@ -12,9 +12,11 @@ class SecureString < String
   # [:hex] Initialize using a hexidecimal string.
   # [:int] Initialize using the numeric value of the hexidecimal string.
   # [:base64] Initialize using the given base64 encoded data.
-  def initialize(mode = :data, value)
-    data_string = self.class.parse_data(mode, value)
-    self.replace( data_string )
+  # To specify a value kind, pass the :type option.
+  def initialize(value, opts={})
+    raise ArgumentError, "The first argument is a symbol; setting the input data type this way is no longer supported. Call `#{self.class.name}.new('string', :type => #{value.inspect})' instead.", caller if value.kind_of?(Symbol)
+    data_string = self.class.parse_data(value, opts)
+    self.replace(data_string)
   end
   
   # Override the default to_i method to return the integer value of the data

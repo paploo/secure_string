@@ -1,5 +1,5 @@
 require 'openssl'
-require_relative 'digest_finder'
+require File.join(File.dirname(__FILE__), 'digest_finder')
   
 module SecurizeString
   # Adds methods for OpenSSL::Digest support.

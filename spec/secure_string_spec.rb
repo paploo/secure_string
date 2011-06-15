@@ -22,31 +22,31 @@ describe "SecureString" do
   
   it 'should initialize from hex' do
     @messages.each do |message| 
-      ss = SecureString.new(:hex, message[:hex])
+      ss = SecureString.new(message[:hex], :type => :hex)
       ss.should == message[:string]
     
-      ss = SecureString.new(:hex, message[:hex].upcase)
+      ss = SecureString.new(message[:hex].upcase, :type => :hex)
       ss.should == message[:string]
     end
   end
   
   it 'should initialize from data' do
     @messages.each do |message|
-      ss = SecureString.new(:data, message[:string])
+      ss = SecureString.new(message[:string], :type => :data)
       ss.should == message[:string]
     end
   end
   
   it 'should initialize from int' do
     @messages.each do |message|
-      ss = SecureString.new(:int, message[:int])
+      ss = SecureString.new(message[:int], :type => :int)
       ss.should == message[:string]
     end
   end
   
   it 'should initialize from Base64' do
     @messages.each do |message|
-      ss = SecureString.new(:base64, message[:base64])
+      ss = SecureString.new(message[:base64], :type => :base64)
       ss.should == message[:string]
     end
     
@@ -59,7 +59,11 @@ describe "SecureString" do
   end
   
   it 'should implement to_hex' do
-    SecureString.instance_methods.should include(:to_hex)
+    if( RUBY_VERSION >= '1.9.0' )
+      SecureString.instance_methods.should include(:to_hex)
+    else
+      SecureString.instance_methods.should include('to_hex')
+    end
     
     @messages.each do |message|
       ss = SecureString.new(message[:string])
@@ -68,7 +72,11 @@ describe "SecureString" do
   end
   
   it 'should implement to_i properly' do
-    SecureString.instance_methods.should include(:to_i)
+    if( RUBY_VERSION >= '1.9.0' )
+      SecureString.instance_methods.should include(:to_i)
+    else
+      SecureString.instance_methods.should include('to_i')
+    end
     
     @messages.each do |message|
       ss = SecureString.new(message[:string])
@@ -89,7 +97,7 @@ describe "SecureString" do
     35563e0d 8bdf572f 77b53065 cef31f32 dc9dbaa0 4146261e 9994bd5c d0758e3d"
     DATA
     
-    ss = SecureString.new(:hex, data)
+    ss = SecureString.new(data, :type => :hex)
     
     # This was taken from a publically published SHA-0 data collision document,
     # so the best way to know that the data is good is to SHA-0 it and see if
@@ -97,33 +105,35 @@ describe "SecureString" do
     OpenSSL::Digest::SHA.hexdigest(ss).should == "c9f160777d4086fe8095fba58b7e20c228a4006b"
   end
   
-  describe 'Encodings' do
+  if( RUBY_VERSION >= '1.9.0' )
+    describe 'Encodings' do
     
-    before(:each) do
-      @unicode_string = "A resumé for the moose; Eine Zusammenfassung für die Elche; Резюме для лосей; アメリカヘラジカのための概要; Μια περίληψη για τις άλκες; 麋的一份簡歷; Un résumé pour les orignaux."
-    end
+      before(:each) do
+        @unicode_string = "A resumé for the moose; Eine Zusammenfassung für die Elche; Резюме для лосей; アメリカヘラジカのための概要; Μια περίληψη για τις άλκες; 麋的一份簡歷; Un résumé pour les orignaux."
+      end
     
-    it 'should NOT change the encoding of a string' do
-      @unicode_string.encoding.should == Encoding.find("UTF-8")
-      ss = SecureString.new(@unicode_string)
-      ss.encoding.should == @unicode_string.encoding
-    end
+      it 'should NOT change the encoding of a string' do
+        @unicode_string.encoding.should == Encoding.find("UTF-8")
+        ss = SecureString.new(@unicode_string)
+        ss.encoding.should == @unicode_string.encoding
+      end
     
-    it 'should NOT change the length to the byte count for UTF-8 encoded strings.' do
-      @unicode_string.encoding.should == Encoding.find("UTF-8")
-      ss = SecureString.new(@unicode_string)
-      ss.length.should < ss.bytesize
-    end
+      it 'should NOT change the length to the byte count for UTF-8 encoded strings.' do
+        @unicode_string.encoding.should == Encoding.find("UTF-8")
+        ss = SecureString.new(@unicode_string)
+        ss.length.should < ss.bytesize
+      end
     
-    it 'should allow forced transcoding to binary' do
-      ss = SecureString.new(@unicode_string)
+      it 'should allow forced transcoding to binary' do
+        ss = SecureString.new(@unicode_string)
       
-      ss.encoding.should == Encoding.find("UTF-8")
-      ss.force_encoding("Binary")
-      ss.encoding.should == Encoding.find("ASCII-8BIT")
-      @unicode_string.encoding.should == Encoding.find("UTF-8")
-    end
+        ss.encoding.should == Encoding.find("UTF-8")
+        ss.force_encoding("Binary")
+        ss.encoding.should == Encoding.find("ASCII-8BIT")
+        @unicode_string.encoding.should == Encoding.find("UTF-8")
+      end
     
+    end
   end
   
 end

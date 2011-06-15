@@ -12,10 +12,10 @@ describe "Examples" do
     ss.to_i.should == 22405534230753928650781647905
     ss.to_base64.should == "SGVsbG8gV29ybGQh\n"
     
-    ss1 = SecureString.new(:data, "Hello World!")
-    ss2 = SecureString.new(:hex, "48656c6c6f20576f726c6421")
-    ss3 = SecureString.new(:int, 22405534230753928650781647905)
-    ss4 = SecureString.new(:base64, "SGVsbG8gV29ybGQh")
+    ss1 = SecureString.new("Hello World!", :type => :data)
+    ss2 = SecureString.new("48656c6c6f20576f726c6421", :type => :hex)
+    ss3 = SecureString.new(22405534230753928650781647905, :type => :int)
+    ss4 = SecureString.new("SGVsbG8gV29ybGQh", :type => :base64)
     
     ss1.should == ss
     ss2.should == ss
@@ -26,9 +26,9 @@ describe "Examples" do
   it 'should perform the base64 example' do
     SecureString.new("Hello World!").to_base64.should == "SGVsbG8gV29ybGQh\n"
     
-    (SecureString.new(:base64, "SGVsbG8gV29ybGQh") == "Hello World!"   ).should be_true
-    (SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"            ).should be_false
-    (SecureString.new("SGVsbG8gV29ybGQh").from_base64 == "Hello World!").should be_true
+    (SecureString.new("SGVsbG8gV29ybGQh", :type => :base64) == "Hello World!").should be_true
+    (SecureString.new("SGVsbG8gV29ybGQh") == "Hello World!"                  ).should be_false
+    (SecureString.new("SGVsbG8gV29ybGQh").from_base64 == "Hello World!"      ).should be_true
   end
   
   it 'should perform digest example' do
@@ -54,22 +54,24 @@ describe "Examples" do
     cipher_text.should_not == message
   end
   
-  it 'should perform the char encoding example' do
-    s = "Resum\u00E9"
-    s.encoding.should == Encoding.find("UTF-8")
-    s.length.should == 6
-    s.bytesize.should == 7
+  if( RUBY_VERSION >= '1.9.0' )
+    it 'should perform the char encoding example' do
+      s = "Resum\u00E9"
+      s.encoding.should == Encoding.find("UTF-8")
+      s.length.should == 6
+      s.bytesize.should == 7
     
-    s = "Resum\u00E9"
-    s.force_encoding('BINARY')
-    s.encoding.should == Encoding.find("ASCII-8BIT")
-    s.length.should == 7
-    s.bytesize.should == 7
+      s = "Resum\u00E9"
+      s.force_encoding('BINARY')
+      s.encoding.should == Encoding.find("ASCII-8BIT")
+      s.length.should == 7
+      s.bytesize.should == 7
     
-    s = "Resum\u00E9"
-    b = s.dup.force_encoding('BINARY')
-    (s == b).should be_false
-    (s.bytes.to_a == b.bytes.to_a).should be_true
+      s = "Resum\u00E9"
+      b = s.dup.force_encoding('BINARY')
+      (s == b).should be_false
+      (s.bytes.to_a == b.bytes.to_a).should be_true
+    end
   end
   
 end

@@ -18,17 +18,22 @@ module SecurizeString
       # [:hex] Initialize using a hexidecimal string.
       # [:int] Initialize using the numeric value of the hexidecimal string.
       # [:base64] Initialize using the given base64 encoded data.
-      def parse_data(mode = :data, value)
-        case mode
+      # To specify a value kind, use the :type option.
+      def parse_data(value, opts={})
+        raise ArgumentError, "The first argument is a symbol; setting the input data type this way is no longer supported. Call `#{self.class.name}.new('string', :type => #{value.inspect})' instead.", caller if value.kind_of?(Symbol)
+        data_type_hint = (opts[:data_type_hint] || opts[:type] || :data).to_sym
+        case data_type_hint
         when :hex
           hex_string = value.to_s.delete('^0-9a-fA-F')
           data_string = [hex_string].pack('H' + hex_string.bytesize.to_s)
         when :data
           data_string = value.to_s
         when :int
-          data_string = self.send(__method__, :hex, value.to_i.to_s(16))
+          data_string = self.send(__method__, value.to_i.to_s(16), :type => :hex)
         when :base64
           data_string = Base64.decode64(value.to_s)
+        else
+          raise ArgumentError, "Unrecognized data type hint: #{data_type_hint.inspect}"
         end
         
         return data_string
