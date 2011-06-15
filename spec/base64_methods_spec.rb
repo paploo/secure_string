@@ -52,6 +52,15 @@ describe "SecureString" do
         (lambda {ss.from_base64(true)}).should raise_error(ArgumentError)
       end
     end
+    
+    it 'should return SecureString instances' do
+      @messages.each do |message|
+        ss = SecureString.new(message[:string]).to_base64
+        ss.should be_kind_of(SecureString)
+        ss = SecureString.new(message[:base64]).from_base64
+        ss.should be_kind_of(SecureString)
+      end
+    end
   end
   
 end

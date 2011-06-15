@@ -27,7 +27,7 @@ module SecurizeString
         raise ArgumentError, "__method__ expects an argument hash but got #{opts.class.name}" unless opts.kind_of?(Hash)
         data = (opts[:url_safe] ? Base64.urlsafe_encode64(self) : Base64.encode64(self))
         data.delete!("\n\r") if opts[:no_break] # Delete on \n and \r is about 3x faster than gsub on /\s+/.
-        return data
+        return self.class.new(data)
       end
       
       # Decodes from base64.
@@ -39,7 +39,8 @@ module SecurizeString
       # which is sometimes compatible, but often incompatible with RFC 2045.
       def from_base64(opts={})
         raise ArgumentError, "__method__ expects an argument hash but got #{opts.class.name}" unless opts.kind_of?(Hash)
-        return (opts[:url_safe] ? Base64.urlsafe_decode64(self) : Base64.decode64(self))
+        string = (opts[:url_safe] ? Base64.urlsafe_decode64(self) : Base64.decode64(self))
+        return self.class.new(string)
       end
       
     end

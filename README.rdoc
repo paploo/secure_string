@@ -234,6 +234,8 @@ or directly via e-mail at:
 mailto:jeff@paploo.net
 
 = Version History
+[1.2.1 - 2011-Jun-15] Bugfixes
+                      * (FIX) To/From Base64 methods were returning normal strings, making chaining impossible.
 [1.2.0 - 2011-May-17] Re-wrote Base64 module to address problems with RFC 2045 vs. RFC 4648 compatibility.
                       * Added testing against source strings that generate incompatible encodings between RFC 2045 and RFC 4648.
                       * (FEATURE) added option to strip newlines from the returned base64 string.

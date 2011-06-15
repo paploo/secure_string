@@ -7,7 +7,7 @@ end
 
 Gem::Specification.new do |s|
   s.name = 'secure_string'
-  s.version = '1.2.0'
+  s.version = '1.2.1'
   
   s.required_ruby_version = '>= 1.9.0'
   
