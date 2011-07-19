@@ -28,10 +28,39 @@ module SecurizeString
         return [cipher.random_key, cipher.random_iv].map {|s| self.new(s)}
       end
       
-      # A convenience method for generating a random key and init vector for AES keys.
+      # A convenience method for generating a cipher key from a passphrase
+      # using PKCS5 v2 standards.  The key and the salt may be any string.
+      #
+      # This also derives a predictable initialization vector from the given
+      # passphrase in a manor consistent with RFC2898, though it is better to
+      # generate a random IV with each encryption of the same data if possible.
+      #
+      # Note that the OpenSSL::Cipher#pkcs5_keyivgen method is not PKCS5 v2
+      # compliant, and therefore will not be implemented.
+      def cipher_passphrase_keygen(cipher_name, passphrase, salt, iterations=2048)
+        # The first pits of a PBKDF2 are the same wether I build the key and IV
+        # at once, but when an IV is built in the RFC2898 standards, they do it
+        # this way.
+        cipher = OpenSSL::Cipher.new(cipher_name.to_s)
+        cipher.encrypt
+        key_and_iv = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase.to_s, salt.to_s, iterations.to_i, cipher.key_len+cipher.iv_len)
+        return [key_and_iv[0,cipher.key_len], key_and_iv[cipher.key_len, cipher.iv_len]].map {|s| self.new(s)}
+      end
+      
+      # A convenience method for generating a random key and init vector for AES
+      # encryption.
+      #
       # Defaults to a key length of 256.
       def aes_keygen(key_len=256)
         return cipher_keygen("aes-#{key_len.to_i}-cbc")
+      end
+      
+      # A convenience method for generating a key and init vector from a passphrase
+      # for AES encryption.
+      #
+      # Defaults to a key length of 256.
+      def aes_passphrase_keygen(key_len, passphrase, salt, iterations=2048)
+        return cipher_passphrase_keygen("aes-#{key_len.to_i}-cbc", passphrase, salt, iterations)
       end
       
     end

@@ -18,11 +18,54 @@ describe "SecureString" do
         iv.should be_kind_of(SecureString)
       end
       
+      it 'should provide a passphrase keygen helper' do
+        SecureString.should respond_to(:cipher_passphrase_keygen)
+      end
+      
+      it 'should provide passphrase generated keys as a SecureString class' do
+        key, iv = SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my salt')
+        
+        key.should_not be_nil
+        iv.should_not be_nil
+        
+        key.should be_kind_of(SecureString)
+        iv.should be_kind_of(SecureString)
+      end
+      
+      it 'should generate keys from passphrases with 2048 rounds by default' do
+        default_key, default_iv = SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt')
+        
+        key, iv = SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt', 2048)
+        key.should == default_key
+        iv.should == default_iv
+        
+        key, iv = SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt', 1024)
+        key.should_not == default_key
+        key.should_not == default_iv
+      end
+      
+      it 'should generate a predictable key from a given passphrase' do
+        SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt').should == SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt')
+        SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt').should_not == SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'another_salt')
+        SecureString.cipher_passphrase_keygen('DES', 'some passphrase', 'my_salt').should_not == SecureString.cipher_passphrase_keygen('DES', 'another passphrase', 'my_salt')
+      end
+      
+      it 'should provide an AES passphrase keygen helper' do
+        SecureString.should respond_to(:aes_passphrase_keygen)
+      end
+      
+      it 'should, for any AES key size, passthrough to the cipher passphrase keygen' do
+        [128,192,256].each do |bits|
+          SecureString.aes_passphrase_keygen(bits, 'passphrase', 'salt').should == SecureString.cipher_passphrase_keygen("aes-#{bits}-cbc", 'passphrase', 'salt')
+          SecureString.aes_passphrase_keygen(bits, 'passphrase', 'salt', 1024).should == SecureString.cipher_passphrase_keygen("aes-#{bits}-cbc", 'passphrase', 'salt', 1024)
+        end
+      end
+      
       it 'should provide an AES keygen helper' do
         SecureString.should respond_to(:aes_keygen)
       end
       
-      it 'should provide generated AES keysas a SecureString class' do
+      it 'should provide generated AES keys as a SecureString class' do
         key, iv = SecureString.aes_keygen
         
         key.should_not be_nil
