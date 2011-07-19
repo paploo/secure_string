@@ -25,7 +25,7 @@ module SecurizeString
         case data_type_hint
         when :hex
           hex_string = value.to_s.delete('^0-9a-fA-F')
-          data_string = [hex_string].pack('H' + hex_string.bytesize.to_s)
+          data_string = [hex_string].pack('H*')
         when :data
           data_string = value.to_s
         when :int
@@ -46,7 +46,7 @@ module SecurizeString
       
       # Returns the hexidecimal string representation of the data.
       def data_to_hex
-        return (self.to_s.empty? ? '' : self.to_s.unpack('H' + (self.to_s.bytesize*2).to_s)[0])
+        return (self.to_s.empty? ? '' : self.to_s.unpack('H*')[0])
       end
       
       # Returns the data converted from hexidecimal into an integer.
