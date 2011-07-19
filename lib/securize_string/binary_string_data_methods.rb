@@ -56,6 +56,26 @@ module SecurizeString
         return (self.to_s.empty? ? 0 : self.data_to_hex.hex)
       end
       
+      # Returns an escaped hex string representation of the data.
+      #
+      # This hex string is compatible with Ruby and Javascript.
+      def data_to_escaped_hex
+        # First we convert the string into a packed hex string.
+        hex_string = self.unpack('H*')[0]
+        
+        # Now we grab two elements at a time, prefix it, and add it to the buffer.
+        ptr = 0
+        len = self.bytesize
+        outbuf = ""
+        while(ptr<(len*2))
+          outbuf << '\x' + hex_string[ptr,2]
+          ptr+=2
+        end
+        
+        # Now we return the buffer
+        return outbuf
+      end
+      
     end
     
   end

@@ -47,6 +47,14 @@ describe "SecurityString" do
       ss.data_to_i.should == 0
     end
     
+    it 'should be able to convert to an escaped hex string' do
+      @messages.each do |message|
+        ss = SecureString.new(message[:string])
+        ss.data_to_escaped_hex.delete('^0-9A-Fa-f').should == message[:hex]
+        ss.data_to_escaped_hex.should == message[:string].each_byte.map {|b| '\x' + ('%02x' % b)}.join
+      end
+    end
+    
   end
   
 end

@@ -30,6 +30,12 @@ class SecureString < String
     return data_to_hex
   end
   
+  # Add a method to convert the internal binary dat into an escaped hex string
+  # which is suitable for pasting into Ruby and Javascript source files.
+  def to_escaped_hex
+    return data_to_escaped_hex
+  end
+  
   # Override the default inspect to return the hexidecimal
   # representation of the data contained in this string.
   def inspect

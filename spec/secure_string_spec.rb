@@ -84,8 +84,20 @@ describe "SecureString" do
     end
   end
   
-  it 'should parse hex data with spaces' do
+  it 'should implement to_escaped_hex' do
+    if( RUBY_VERSION >= '1.9.0' )
+      SecureString.instance_methods.should include(:to_escaped_hex)
+    else
+      SecureString.instance_methods.should include('to_escaped_hex')
+    end
     
+    @messages.each do |message|
+      ss = SecureString.new(message[:string])
+      ss.to_escaped_hex.should == ss.data_to_escaped_hex
+    end
+  end
+  
+  it 'should parse hex data with spaces' do
     data = <<-DATA
     a766a602 b65cffe7 73bcf258 26b322b3 d01b1a97 2684ef53 3e3b4b7f 53fe3762
     24c08e47 e959b2bc 3b519880 b9286568 247d110f 70f5c5e2 b4590ca3 f55f52fe
@@ -103,6 +115,18 @@ describe "SecureString" do
     # so the best way to know that the data is good is to SHA-0 it and see if
     # we get back the value!  (http://fr.wikipedia.org/wiki/SHA-0)
     OpenSSL::Digest::SHA.hexdigest(ss).should == "c9f160777d4086fe8095fba58b7e20c228a4006b"
+  end
+  
+  it 'should parse hex data with escape characters' do
+    # Create the string with escape characters in there.
+    data = '\x48\x65\x6c\x6c\x6f'
+    
+    # Make sure Ruby didn't convert them to the actual string.
+    data.should_not == 'Hello'
+    
+    # Now see if SecureString can convert it as hex data.
+    ss = SecureString.new(data, :type => :hex)
+    ss.should == 'Hello'
   end
   
   if( RUBY_VERSION >= '1.9.0' )
